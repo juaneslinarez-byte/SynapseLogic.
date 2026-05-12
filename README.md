@@ -22,3 +22,4 @@ src/
     ├── control/     # Lógica de análisis (BFS, DFS, Dijkstra, CSV)
     └── vista/       # Interfaz gráfica (Swing)
 ```
+https://github.com/juaneslinarez-byte/SynapseLogic./tree/master
