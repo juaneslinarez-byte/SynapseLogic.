@@ -1,0 +1,15 @@
+# Archivos compilados
+build/
+dist/
+
+# Configuracion privada de NetBeans
+nbproject/private/
+nbproject/Makefile-*.mk
+nbproject/Package-*.bash
+
+# Librerias (se agregan manualmente)
+lib/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
