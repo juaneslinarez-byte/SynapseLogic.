@@ -6,7 +6,6 @@ package synapselogic.modelo;
  * Tambien contiene la tabla hash de neurotransmisores del diccionario cargado.
  *
  * @author Juan Linarez
- * @author Leonardo Zambrano
  */
 public class GrafoNeuronal {
 

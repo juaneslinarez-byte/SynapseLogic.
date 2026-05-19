@@ -6,7 +6,6 @@ package synapselogic.modelo;
  * El peso de la sinapsis se calcula como: distancia / (velocidad * factorK).
  *
  * @author Juan Linarez
- * @author Leonardo Zambrano
  */
 public class Sinapsis {
 

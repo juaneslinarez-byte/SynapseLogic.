@@ -5,7 +5,6 @@ package synapselogic.modelo;
  * Cada entrada guarda un neurotransmisor y apunta al siguiente nodo de la cadena.
  *
  * @author Juan Linarez
- * @author Leonardo Zambrano
  */
 public class EntradaHash {
 

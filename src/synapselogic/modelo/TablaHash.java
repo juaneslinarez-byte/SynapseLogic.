@@ -6,7 +6,6 @@ package synapselogic.modelo;
  * La funcion de dispersion es propia, basada en multiplicacion por el primo 31.
  *
  * @author Juan Linarez
- * @author Leonardo Zambrano
  */
 public class TablaHash {
 

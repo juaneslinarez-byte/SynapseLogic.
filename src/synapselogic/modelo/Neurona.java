@@ -5,7 +5,6 @@ package synapselogic.modelo;
  * Almacena su identificador, nombre y las sinapsis de salida hacia otras neuronas.
  *
  * @author Juan Linarez
- * @author Leonardo Zambrano
  */
 public class Neurona {
 

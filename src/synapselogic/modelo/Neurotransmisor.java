@@ -5,7 +5,6 @@ package synapselogic.modelo;
  * Almacena su identificador, nombre, efecto, velocidad y descripcion.
  *
  * @author Juan Linarez
- * @author Leonardo Zambrano
  */
 public class Neurotransmisor {
 
