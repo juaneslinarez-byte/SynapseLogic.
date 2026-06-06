@@ -3,6 +3,7 @@ package synapselogic.vista;
 import java.awt.*;
 import java.io.File;
 import javax.swing.*;
+import javax.swing.JScrollPane;
 import synapselogic.control.AnalizadorConectividad;
 import synapselogic.control.AnalizadorFlujo;
 import synapselogic.control.CargadorCSV;
@@ -26,12 +27,12 @@ public class VentanaPrincipal extends JFrame {
     private AnalizadorFlujo       analizadorFlujo;
     private VisualizadorGrafo     visualizador;
 
-    private JTextField campoNeuronFuente;
-    private JTextField campoOrigen;
-    private JTextField campoDestino;
-    private JTextField campoBusquedaNT;
-    private JTextArea  areaResultados;
-    private JLabel     etiquetaEstado;
+    private JTextField    campoNeuronFuente;
+    private JTextField    campoOrigen;
+    private JTextField    campoDestino;
+    private JTextField    campoBusquedaNT;
+    private PanelResultados panelResultados;
+    private JLabel        etiquetaEstado;
 
     /**
      * Constructor de la clase VentanaPrincipal.
@@ -68,7 +69,9 @@ public class VentanaPrincipal extends JFrame {
         visualizador = new VisualizadorGrafo();
         add(visualizador, BorderLayout.CENTER);
 
-        add(crearPanelResultados(), BorderLayout.EAST);
+        panelResultados = new PanelResultados();
+        panelResultados.setPreferredSize(new Dimension(250, 0));
+        add(panelResultados, BorderLayout.EAST);
         add(crearBarraEstado(),     BorderLayout.SOUTH);
     }
 
@@ -156,20 +159,6 @@ public class VentanaPrincipal extends JFrame {
     }
 
     /**
-     * Crea el panel derecho con el area de resultados.
-     * @return panel de resultados con scroll
-     */
-    private JScrollPane crearPanelResultados() {
-        areaResultados = new JTextArea();
-        areaResultados.setEditable(false);
-        areaResultados.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        JScrollPane scroll = new JScrollPane(areaResultados);
-        scroll.setPreferredSize(new Dimension(250, 0));
-        scroll.setBorder(BorderFactory.createTitledBorder("Resultados"));
-        return scroll;
-    }
-
-    /**
      * Crea la barra de estado inferior.
      * @return panel de la barra de estado
      */
@@ -219,7 +208,7 @@ public class VentanaPrincipal extends JFrame {
 
         File archivo = selector.getSelectedFile();
         if (cargador.cargarDiccionario(archivo.getAbsolutePath(), grafo)) {
-            areaResultados.setText("Diccionario cargado: " +
+            panelResultados.mostrar("Diccionario cargado: " +
                 grafo.getTablaHash().getCantidad() + " neurotransmisores.");
             actualizarBarraEstado("");
         } else {
@@ -236,7 +225,7 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         grafo.simularFatiga();
-        areaResultados.setText("Fatiga cognitiva simulada.\nTodos los factorK multiplicados por 1.2.");
+        panelResultados.mostrar("Fatiga cognitiva simulada.\nTodos los factorK multiplicados por 1.2.");
     }
 
     /**
@@ -261,7 +250,7 @@ public class VentanaPrincipal extends JFrame {
             sb.append("  ").append(analizadorConectividad.getAisladas()[i]).append("\n");
             visualizador.marcarAislada(analizadorConectividad.getAisladas()[i]);
         }
-        areaResultados.setText(sb.toString());
+        panelResultados.mostrar(sb.toString());
     }
 
     /**
@@ -287,7 +276,7 @@ public class VentanaPrincipal extends JFrame {
             }
             sb.append("\n\nCosto total: ").append(String.format("%.4f", analizadorFlujo.getCostoTotal()));
         }
-        areaResultados.setText(sb.toString());
+        panelResultados.mostrar(sb.toString());
     }
 
     /**
@@ -299,7 +288,7 @@ public class VentanaPrincipal extends JFrame {
 
         Neurotransmisor nt = grafo.getTablaHash().obtener(id);
         if (nt == null) {
-            areaResultados.setText("Neurotransmisor \"" + id + "\" no encontrado.");
+            panelResultados.mostrar("Neurotransmisor \"" + id + "\" no encontrado.");
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -308,7 +297,7 @@ public class VentanaPrincipal extends JFrame {
         sb.append("Efecto:      ").append(nt.getEfecto()).append("\n");
         sb.append("Velocidad:   ").append(nt.getVelocidad()).append("\n");
         sb.append("Descripcion: ").append(nt.getDescripcion());
-        areaResultados.setText(sb.toString());
+        panelResultados.mostrar(sb.toString());
     }
 
     /**
