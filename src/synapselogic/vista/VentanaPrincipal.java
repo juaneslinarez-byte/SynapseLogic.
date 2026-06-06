@@ -120,9 +120,14 @@ public class VentanaPrincipal extends JFrame {
         panel.add(campoNeuronFuente);
         panel.add(Box.createVerticalStrut(5));
 
-        JButton btnDetectarAisladas = new JButton("Detectar zonas aisladas");
+        JButton btnDetectarAisladas = new JButton("Detectar aisladas (BFS)");
         btnDetectarAisladas.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(btnDetectarAisladas);
+        panel.add(Box.createVerticalStrut(3));
+
+        JButton btnDetectarAisladasDFS = new JButton("Detectar aisladas (DFS)");
+        btnDetectarAisladasDFS.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(btnDetectarAisladasDFS);
         panel.add(Box.createVerticalStrut(15));
 
         panel.add(new JLabel("Ruta optima (Dijkstra):"));
@@ -175,8 +180,9 @@ public class VentanaPrincipal extends JFrame {
         btnEliminar.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(btnEliminar);
 
-        btnDetectarAisladas.addActionListener(e -> accionDetectarAisladas());
-        btnCalcularRuta.addActionListener(e     -> accionCalcularRuta());
+        btnDetectarAisladas.addActionListener(e    -> accionDetectarAisladas());
+        btnDetectarAisladasDFS.addActionListener(e -> accionDetectarAisladasDFS());
+        btnCalcularRuta.addActionListener(e        -> accionCalcularRuta());
         btnBuscarNT.addActionListener(e         -> accionBuscarNT());
         btnAgregar.addActionListener(e          -> accionAgregarNeurona());
         btnEliminar.addActionListener(e         -> accionEliminarNeurona());
@@ -323,6 +329,31 @@ public class VentanaPrincipal extends JFrame {
         sb.append("Efecto:      ").append(nt.getEfecto()).append("\n");
         sb.append("Velocidad:   ").append(nt.getVelocidad()).append("\n");
         sb.append("Descripcion: ").append(nt.getDescripcion());
+        panelResultados.mostrar(sb.toString());
+    }
+
+    /**
+     * Ejecuta DFS desde la neurona fuente y muestra alcanzables y aisladas.
+     */
+    private void accionDetectarAisladasDFS() {
+        String origen = campoNeuronFuente.getText().trim();
+        if (origen.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingresa una neurona fuente.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        analizadorConectividad.analizarDesdeDFS(grafo, origen);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("DFS desde ").append(origen).append("\n\n");
+        sb.append("Alcanzables (").append(analizadorConectividad.getNumAlcanzables()).append("):\n");
+        for (int i = 0; i < analizadorConectividad.getNumAlcanzables(); i++) {
+            sb.append("  ").append(analizadorConectividad.getAlcanzables()[i]).append("\n");
+        }
+        sb.append("\nAisladas (").append(analizadorConectividad.getNumAisladas()).append("):\n");
+        for (int i = 0; i < analizadorConectividad.getNumAisladas(); i++) {
+            sb.append("  ").append(analizadorConectividad.getAisladas()[i]).append("\n");
+            visualizador.marcarAislada(analizadorConectividad.getAisladas()[i]);
+        }
         panelResultados.mostrar(sb.toString());
     }
 
