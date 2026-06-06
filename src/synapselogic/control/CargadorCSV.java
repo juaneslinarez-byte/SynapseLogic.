@@ -12,8 +12,7 @@ import synapselogic.modelo.Neurotransmisor;
  * Interactua con GrafoNeuronal y TablaHash para poblar las estructuras de datos.
  *
  * Formato del CSV de red neuronal:
- *   NEURONA,id,nombre
- *   SINAPSIS,origen,destino,distancia,idNeurotransmisor,factorK
+ *   origen,destino,distancia,ID_Neurotransmisor,coheficiente_eficiencia_sináptica
  *
  * Formato del CSV de diccionario:
  *   id,nombre,efecto,velocidad,descripcion
@@ -24,7 +23,8 @@ public class CargadorCSV {
 
     /**
      * Carga una red neuronal desde un archivo CSV y la inserta en el grafo.
-     * Las lineas que no correspondan al formato esperado se omiten.
+     * La primera linea (encabezado) se omite. Las neuronas se crean
+     * automaticamente a partir de los IDs de origen y destino.
      * @param ruta ruta absoluta del archivo CSV de red neuronal
      * @param grafo grafo neuronal donde se insertaran los datos
      * @return true si la carga fue exitosa, false si ocurrio un error
@@ -32,23 +32,28 @@ public class CargadorCSV {
     public boolean cargarRed(String ruta, GrafoNeuronal grafo) {
         try (BufferedReader reader = new BufferedReader(new FileReader(ruta))) {
             String linea;
+            boolean primera = true;
             while ((linea = reader.readLine()) != null) {
                 linea = linea.trim();
                 if (linea.isEmpty()) continue;
+                if (primera) { primera = false; continue; }
 
-                String[] partes = linea.split(",", 6);
+                String[] partes = linea.split(",", 5);
+                if (partes.length < 5) continue;
 
-                if (partes[0].equals("NEURONA") && partes.length >= 3) {
-                    Neurona n = new Neurona(partes[1].trim(), partes[2].trim());
-                    grafo.agregarNeurona(n);
+                try {
+                    String origen    = partes[0].trim();
+                    String destino   = partes[1].trim();
+                    double distancia = Double.parseDouble(partes[2].trim());
+                    String idNT      = partes[3].trim();
+                    double factorK   = Double.parseDouble(partes[4].trim());
 
-                } else if (partes[0].equals("SINAPSIS") && partes.length >= 6) {
-                    String origen  = partes[1].trim();
-                    String destino = partes[2].trim();
-                    double distancia = Double.parseDouble(partes[3].trim());
-                    String idNT    = partes[4].trim();
-                    double factorK = Double.parseDouble(partes[5].trim());
+                    grafo.agregarNeurona(new Neurona(origen, origen));
+                    grafo.agregarNeurona(new Neurona(destino, destino));
                     grafo.agregarSinapsis(origen, destino, distancia, idNT, factorK);
+
+                } catch (NumberFormatException e) {
+                    // linea mal formada, se omite
                 }
             }
             return true;
@@ -61,7 +66,7 @@ public class CargadorCSV {
     /**
      * Carga un diccionario de neurotransmisores desde un archivo CSV
      * e inserta cada uno en la tabla hash del grafo.
-     * Las lineas que no correspondan al formato esperado se omiten.
+     * La primera linea (encabezado) se omite.
      * @param ruta ruta absoluta del archivo CSV del diccionario
      * @param grafo grafo neuronal cuya tabla hash se llenara
      * @return true si la carga fue exitosa, false si ocurrio un error
@@ -69,21 +74,28 @@ public class CargadorCSV {
     public boolean cargarDiccionario(String ruta, GrafoNeuronal grafo) {
         try (BufferedReader reader = new BufferedReader(new FileReader(ruta))) {
             String linea;
+            boolean primera = true;
             while ((linea = reader.readLine()) != null) {
                 linea = linea.trim();
                 if (linea.isEmpty()) continue;
+                if (primera) { primera = false; continue; }
 
                 String[] partes = linea.split(",", 5);
                 if (partes.length < 5) continue;
 
-                String id          = partes[0].trim();
-                String nombre      = partes[1].trim();
-                String efecto      = partes[2].trim();
-                double velocidad   = Double.parseDouble(partes[3].trim());
-                String descripcion = partes[4].trim();
+                try {
+                    String id          = partes[0].trim();
+                    String nombre      = partes[1].trim();
+                    String efecto      = partes[2].trim();
+                    double velocidad   = Double.parseDouble(partes[3].trim());
+                    String descripcion = partes[4].trim().replaceAll("^\"|\"$", "");
 
-                Neurotransmisor nt = new Neurotransmisor(id, nombre, efecto, velocidad, descripcion);
-                grafo.getTablaHash().insertar(nt);
+                    Neurotransmisor nt = new Neurotransmisor(id, nombre, efecto, velocidad, descripcion);
+                    grafo.getTablaHash().insertar(nt);
+
+                } catch (NumberFormatException e) {
+                    // linea mal formada, se omite
+                }
             }
             return true;
 
