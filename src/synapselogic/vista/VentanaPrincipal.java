@@ -302,11 +302,16 @@ public class VentanaPrincipal extends JFrame {
 
     /**
      * Recorre el grafo neuronal y actualiza el visualizador con sus datos.
+     * Primero agrega todos los nodos y luego todas las aristas.
      */
     private void actualizarVisualizador() {
         Neurona[] neuronas = grafo.getNeuronas();
+
         for (int i = 0; i < grafo.getNumNeuronas(); i++) {
             visualizador.agregarNeurona(neuronas[i].getId());
+        }
+
+        for (int i = 0; i < grafo.getNumNeuronas(); i++) {
             Sinapsis[] conexiones = neuronas[i].getConexiones();
             for (int j = 0; j < neuronas[i].getNumConexiones(); j++) {
                 visualizador.agregarSinapsis(conexiones[j].getOrigen(), conexiones[j].getDestino());
