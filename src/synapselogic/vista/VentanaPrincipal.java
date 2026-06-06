@@ -31,6 +31,8 @@ public class VentanaPrincipal extends JFrame {
     private JTextField    campoOrigen;
     private JTextField    campoDestino;
     private JTextField    campoBusquedaNT;
+    private JTextField    campoAgregarId;
+    private JTextField    campoEliminarId;
     private PanelResultados panelResultados;
     private JLabel        etiquetaEstado;
 
@@ -150,10 +152,34 @@ public class VentanaPrincipal extends JFrame {
         JButton btnBuscarNT = new JButton("Buscar");
         btnBuscarNT.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(btnBuscarNT);
+        panel.add(Box.createVerticalStrut(15));
+
+        panel.add(new JLabel("Agregar neurona:"));
+        campoAgregarId = new JTextField();
+        campoAgregarId.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
+        campoAgregarId.setToolTipText("ID de la nueva neurona");
+        panel.add(campoAgregarId);
+        panel.add(Box.createVerticalStrut(3));
+        JButton btnAgregar = new JButton("Agregar neurona");
+        btnAgregar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(btnAgregar);
+        panel.add(Box.createVerticalStrut(10));
+
+        panel.add(new JLabel("Eliminar neurona:"));
+        campoEliminarId = new JTextField();
+        campoEliminarId.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
+        campoEliminarId.setToolTipText("ID de la neurona a eliminar");
+        panel.add(campoEliminarId);
+        panel.add(Box.createVerticalStrut(3));
+        JButton btnEliminar = new JButton("Eliminar neurona");
+        btnEliminar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(btnEliminar);
 
         btnDetectarAisladas.addActionListener(e -> accionDetectarAisladas());
         btnCalcularRuta.addActionListener(e     -> accionCalcularRuta());
         btnBuscarNT.addActionListener(e         -> accionBuscarNT());
+        btnAgregar.addActionListener(e          -> accionAgregarNeurona());
+        btnEliminar.addActionListener(e         -> accionEliminarNeurona());
 
         return panel;
     }
@@ -298,6 +324,45 @@ public class VentanaPrincipal extends JFrame {
         sb.append("Velocidad:   ").append(nt.getVelocidad()).append("\n");
         sb.append("Descripcion: ").append(nt.getDescripcion());
         panelResultados.mostrar(sb.toString());
+    }
+
+    /**
+     * Agrega una nueva neurona al grafo y al visualizador.
+     */
+    private void accionAgregarNeurona() {
+        String id = campoAgregarId.getText().trim();
+        if (id.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingresa un ID para la neurona.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (grafo.obtenerNeurona(id) != null) {
+            JOptionPane.showMessageDialog(this, "Ya existe una neurona con ese ID.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        grafo.agregarNeurona(new synapselogic.modelo.Neurona(id, id));
+        visualizador.agregarNeurona(id);
+        panelResultados.mostrar("Neurona \"" + id + "\" agregada.");
+        campoAgregarId.setText("");
+        actualizarBarraEstado("");
+    }
+
+    /**
+     * Elimina una neurona del grafo y del visualizador.
+     */
+    private void accionEliminarNeurona() {
+        String id = campoEliminarId.getText().trim();
+        if (id.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingresa el ID de la neurona a eliminar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!grafo.eliminarNeurona(id)) {
+            JOptionPane.showMessageDialog(this, "No existe una neurona con ese ID.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        visualizador.eliminarNeurona(id);
+        panelResultados.mostrar("Neurona \"" + id + "\" eliminada.");
+        campoEliminarId.setText("");
+        actualizarBarraEstado("");
     }
 
     /**

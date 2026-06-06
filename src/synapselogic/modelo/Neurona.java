@@ -68,6 +68,26 @@ public class Neurona {
         return numConexiones;
     }
 
+    /**
+     * Elimina todas las sinapsis de salida que apunten a la neurona indicada.
+     * Se usa al eliminar una neurona del grafo para mantener la consistencia.
+     * @param idDestino ID de la neurona destino cuyas sinapsis se eliminaran
+     */
+    public void eliminarConexionesCon(String idDestino) {
+        int i = 0;
+        while (i < numConexiones) {
+            if (conexiones[i].getDestino().equals(idDestino)) {
+                for (int j = i; j < numConexiones - 1; j++) {
+                    conexiones[j] = conexiones[j + 1];
+                }
+                conexiones[numConexiones - 1] = null;
+                numConexiones--;
+            } else {
+                i++;
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return "[" + id + "] " + nombre;

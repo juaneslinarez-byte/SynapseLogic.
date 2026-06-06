@@ -74,6 +74,16 @@ public class VisualizadorGrafo extends JPanel {
     }
 
     /**
+     * Elimina una neurona del grafo visual junto con sus aristas.
+     * @param id identificador de la neurona a eliminar
+     */
+    public void eliminarNeurona(String id) {
+        if (grafo.getNode(id) != null) {
+            grafo.removeNode(id);
+        }
+    }
+
+    /**
      * Elimina todos los nodos y aristas del grafo visual.
      */
     public void limpiar() {

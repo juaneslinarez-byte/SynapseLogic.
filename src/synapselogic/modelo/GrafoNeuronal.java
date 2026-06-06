@@ -64,6 +64,37 @@ public class GrafoNeuronal {
     }
 
     /**
+     * Elimina una neurona del grafo por su ID.
+     * Tambien elimina todas las sinapsis de otras neuronas que apunten hacia ella.
+     * @param id identificador de la neurona a eliminar
+     * @return true si la neurona fue encontrada y eliminada, false si no existe
+     */
+    public boolean eliminarNeurona(String id) {
+        int indice = -1;
+        for (int i = 0; i < numNeuronas; i++) {
+            if (neuronas[i].getId().equals(id)) {
+                indice = i;
+                break;
+            }
+        }
+        if (indice == -1) return false;
+
+        // Desplazar el arreglo para llenar el hueco
+        for (int i = indice; i < numNeuronas - 1; i++) {
+            neuronas[i] = neuronas[i + 1];
+        }
+        neuronas[numNeuronas - 1] = null;
+        numNeuronas--;
+
+        // Eliminar sinapsis de otras neuronas que apunten a la neurona eliminada
+        for (int i = 0; i < numNeuronas; i++) {
+            neuronas[i].eliminarConexionesCon(id);
+        }
+
+        return true;
+    }
+
+    /**
      * Simula fatiga cognitiva multiplicando el factorK de todas las sinapsis por 1.2.
      */
     public void simularFatiga() {
